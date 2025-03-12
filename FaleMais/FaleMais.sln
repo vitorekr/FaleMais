@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaleMais", "FaleMais.csproj", "{73EC1271-124A-43E9-8A95-E6B54B479ECB}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tests", "tests", "{F4494CF2-2968-43B1-844A-724DCB6BB8D7}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FaleMais.Tests", "tests\FaleMais.Tests\FaleMais.Tests.csproj", "{7240DB52-8E3B-4F8F-9BE4-D94508DC0425}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{73EC1271-124A-43E9-8A95-E6B54B479ECB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73EC1271-124A-43E9-8A95-E6B54B479ECB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73EC1271-124A-43E9-8A95-E6B54B479ECB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73EC1271-124A-43E9-8A95-E6B54B479ECB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7240DB52-8E3B-4F8F-9BE4-D94508DC0425}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7240DB52-8E3B-4F8F-9BE4-D94508DC0425}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7240DB52-8E3B-4F8F-9BE4-D94508DC0425}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7240DB52-8E3B-4F8F-9BE4-D94508DC0425}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{7240DB52-8E3B-4F8F-9BE4-D94508DC0425} = {F4494CF2-2968-43B1-844A-724DCB6BB8D7}
+	EndGlobalSection
+EndGlobal

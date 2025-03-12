@@ -1,0 +1,49 @@
+<div class="container">
+  <div class="left-panel">
+    <h1>📞 Calculadora de Custo de Chamada</h1>
+    <p>Compare valores com e sem plano FaleMais.</p>
+
+    <div class="input-group">
+      <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
+      <input type="text" [(ngModel)]="callCostRequest.origin" class="form-control" placeholder="DDD de Origem">
+    </div>
+
+    <div class="input-group">
+      <span class="input-icon"><i class="fas fa-location-arrow"></i></span>
+      <input type="text" [(ngModel)]="callCostRequest.destination" class="form-control" placeholder="DDD de Destino">
+    </div>
+
+    <div class="input-group">
+      <span class="input-icon"><i class="fas fa-clock"></i></span>
+      <input type="number" [(ngModel)]="callCostRequest.duration" class="form-control" placeholder="Tempo da Ligação">
+    </div>
+
+    <div class="input-group">
+      <span class="input-icon"><i class="fas fa-phone"></i></span>
+      <select [(ngModel)]="callCostRequest.plan" class="form-control">
+        <option value="">Selecione um plano</option>
+        <option value="FaleMais 30">FaleMais 30</option>
+        <option value="FaleMais 60">FaleMais 60</option>
+        <option value="FaleMais 120">FaleMais 120</option>
+      </select>
+    </div>
+
+    <div *ngIf="loading" class="loading-spinner">
+      <i class="fas fa-spinner fa-spin"></i> Calculando...
+    </div>
+
+    <button (click)="calculateCost()" class="btn btn-primary">Calcular</button>
+  </div>
+
+  <div class="right-panel">
+    <div *ngIf="result" class="result-container">
+      <h2>💰 Resultado</h2>
+      <p><strong>Com Plano:</strong> <span class="price">R$ {{ result?.costWithPlan?.toFixed(2) }}</span></p>
+      <p><strong>Sem Plano:</strong> <span class="price">R$ {{ result?.costWithoutPlan?.toFixed(2) }}</span></p>
+    </div>
+
+    <div *ngIf="!!errorMessage" class="error-message">
+      <p>{{ errorMessage }}</p>
+    </div>
+  </div>
+</div>
