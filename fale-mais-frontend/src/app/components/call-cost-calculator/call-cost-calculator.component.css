@@ -1,137 +1,178 @@
-body {
-  font-family: 'Inter', sans-serif;
-  background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
-  height: 100vh;
+/* 🎨 Fonte moderna */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+* {
   margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
   display: flex;
   justify-content: center;
   align-items: center;
+  height: 100vh;
+  background: linear-gradient(135deg, #4facfe, #00f2fe);
+  color: #333;
 }
 
+/* 💳 Cartão moderno */
 .container {
-  display: flex;
-  width: 90%;
-  height: 80vh;
-  max-width: 1200px;
-  border-radius: 16px;
-  box-shadow: 0px 8px 20px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 450px;
   background: white;
-  overflow: hidden;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s ease-in-out;
 }
 
-.left-panel {
-  flex: 1;
-  padding: 40px;
-  background: #ffffff;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border-right: 2px solid #e0e0e0;
-}
+  .container:hover {
+    transform: translateY(-5px);
+  }
 
-.left-panel h1 {
-  font-size: 28px;
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.left-panel p {
-  font-size: 14px;
-  color: #666;
-  margin-bottom: 30px;
-}
-
-.input-group {
-  display: flex;
-  align-items: center;
-  background: #f8f9fa;
-  padding: 12px;
-  border-radius: 8px;
-  margin-bottom: 15px;
-  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-}
-
-.input-group .input-icon {
-  margin-right: 10px;
-  color: #007bff;
-  font-size: 18px;
-}
-
-.input-group .form-control {
-  border: none;
-  background: transparent;
-  width: 100%;
-  font-size: 16px;
-  outline: none;
-}
-
-.btn-primary {
-  width: 100%;
-  padding: 14px;
-  font-size: 18px;
-  font-weight: bold;
-  background: #ffcc00;
-  border: none;
-  color: white;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-.btn-primary:hover {
-  background: #0056b3;
-}
-
-.right-panel {
-  flex: 1;
-  padding: 40px;
-  background: #f1f3f5;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  text-align: center;
-}
-
-.result-container {
-  background: rgba(0, 123, 255, 0.1);
-  padding: 20px;
-  border-radius: 10px;
-  font-size: 18px;
-  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-}
-
-.price {
+h2 {
   font-size: 22px;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 15px;
+}
+
+/* 🔹 Inputs e Select estilizados */
+.form-group {
+  margin-bottom: 15px;
+}
+
+label {
+  font-weight: 600;
+  font-size: 14px;
+  display: block;
+  margin-bottom: 5px;
+}
+
+input, select {
+  width: 100%;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 14px;
+  transition: border 0.3s ease-in-out;
+}
+
+  input:focus, select:focus {
+    border: 1px solid #4facfe;
+    outline: none;
+  }
+
+/* 🔥 Botão animado */
+.btn {
+  width: 100%;
+  padding: 12px;
+  border: none;
+  background: linear-gradient(90deg, #4facfe, #00c2fe);
+  color: white;
+  font-size: 16px;
   font-weight: bold;
-  color: #007bff;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.3s ease-in-out;
+}
+
+  .btn:hover {
+    background: linear-gradient(90deg, #00c2fe, #4facfe);
+    transform: scale(1.03);
+  }
+
+/* 📝 Estilo do resultado */
+.result {
+  margin-top: 20px;
+  padding: 15px;
+  border-radius: 6px;
+  background: #f7f7f7;
+  text-align: left;
+}
+
+/* ✅ Estilizando mensagens */
+.success {
+  color: #28a745;
+  font-weight: bold;
+}
+
+.error {
+  color: #dc3545;
+  font-weight: bold;
+}
+
+/* ⚠️ Erro nos inputs */
+.input-error input,
+.input-error select {
+  border: 2px solid red;
 }
 
 .error-message {
-  background: rgba(255, 0, 0, 0.2);
-  padding: 15px;
-  border-radius: 10px;
-  text-align: center;
-  font-weight: bold;
-  margin-top: 20px;
+  color: red;
+  font-size: 12px;
+  margin-top: 5px;
+  display: block;
 }
 
-.loading-spinner {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 18px;
+/* 🔹 Link para visualizar os DDDs válidos */
+.info-link {
   color: #007bff;
+  font-size: 14px;
+  cursor: pointer;
+  display: block;
+  margin-top: 5px;
+  transition: color 0.3s ease-in-out;
+}
+
+  .info-link:hover {
+    color: #0056b3;
+  }
+
+/* 📍 Estilo da lista de DDDs */
+.ddd-list {
+  margin-top: 15px;
+  padding: 15px;
+  background: #f7f7f7;
+  border-radius: 6px;
+  text-align: center;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+
+/* 🔢 Estilo da grid de DDDs */
+.ddd-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
   margin-top: 10px;
 }
 
-@media (max-width: 768px) {
-  .container {
-    flex-direction: column;
-    height: auto;
-  }
-  .left-panel, .right-panel {
-    flex: none;
-    width: 100%;
-    border-right: none;
-    padding: 30px;
-  }
+.ddd-item {
+  background: #4facfe;
+  color: white;
+  padding: 8px 12px;
+  border-radius: 5px;
+  font-size: 14px;
+  font-weight: bold;
 }
+
+/* ❌ Botão para fechar a lista */
+.btn-close {
+  margin-top: 10px;
+  padding: 8px;
+  border: none;
+  background: #dc3545;
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.3s ease-in-out;
+}
+
+  .btn-close:hover {
+    background: #a71d2a;
+  }

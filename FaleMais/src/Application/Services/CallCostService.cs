@@ -1,4 +1,4 @@
-using FaleMais.Application.DTOs;
+ï»¿using FaleMais.Application.DTOs;
 using FaleMais.Application.Interfaces;
 using Microsoft.Extensions.Logging;
 
@@ -32,19 +32,13 @@ public class CallCostService : ICallCostService
 
     public CalculateCallCostResponse CalculateCallCost(string origin, string destination, int duration, string plan)
     {
-        if (!_callRates.ContainsKey((origin, destination)))
-        {
-            _logger.LogWarning($"Origem {origin} ou destino {destination} inválidos.");
-            throw new ArgumentException("DDD inválido.");
-        }
-
         decimal rate = _callRates[(origin, destination)];
         int freeMinutes = _plans.GetValueOrDefault(plan, 0);
 
         decimal costWithoutPlan = duration * rate;
         decimal costWithPlan = Math.Max(0, duration - freeMinutes) * rate * 1.10m;
 
-        _logger.LogInformation($"Cálculo realizado: {costWithPlan} com plano, {costWithoutPlan} sem plano.");
+        _logger.LogInformation($"CÃ¡lculo realizado: {costWithPlan} com plano, {costWithoutPlan} sem plano.");
 
         return new CalculateCallCostResponse { CostWithPlan = costWithPlan, CostWithoutPlan = costWithoutPlan };
     }

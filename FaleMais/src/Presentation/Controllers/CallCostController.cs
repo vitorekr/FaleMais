@@ -18,13 +18,19 @@ public class CallCostController : ControllerBase
     [HttpPost("calculate")]
     public IActionResult CalculateCallCost([FromBody] CalculateCallCostRequest request)
     {
-        var result = _callCostService.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan);
-
-        if (result.CostWithoutPlan == -1)
+        try
         {
-            return BadRequest("Invalid origin or destination.");
-        }
+            var result = _callCostService.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan);
 
-        return Ok(result);
+            if (result.CostWithoutPlan == -1)
+            {
+                return BadRequest("Origem ou Destino Inválidos");
+            }
+
+            return Ok(result);
+        } catch (ArgumentException ex)
+        {
+            return BadRequest(new { message = ex.Message });
+        }
     }
 }

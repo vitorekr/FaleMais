@@ -1,49 +1,64 @@
-<div class="container">
-  <div class="left-panel">
-    <h1>📞 Calculadora de Custo de Chamada</h1>
-    <p>Compare valores com e sem plano FaleMais.</p>
+<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
+  <div class="card p-4 shadow-lg">
+    <h2 class="text-center mb-4"><i></i> Calculadora de Custo FaleMais</h2>
 
-    <div class="input-group">
-      <span class="input-icon"><i class="fas fa-map-marker-alt"></i></span>
-      <input type="text" [(ngModel)]="callCostRequest.origin" class="form-control" placeholder="DDD de Origem">
+    <!-- 🔹 DDD de Origem -->
+    <div class="mb-3">
+      <label class="form-label">DDD de Origem:</label>
+      <select class="form-select" [(ngModel)]="callCostRequest.origin" (change)="updateDestinations()">
+        <option value="">Selecione o DDD de origem</option>
+        <option *ngFor="let ddd of validOrigins" [value]="ddd">{{ ddd }}</option>
+      </select>
+      <small class="text-danger" *ngIf="submitted && errors.origin">{{ errors.origin }}</small>
     </div>
 
-    <div class="input-group">
-      <span class="input-icon"><i class="fas fa-location-arrow"></i></span>
-      <input type="text" [(ngModel)]="callCostRequest.destination" class="form-control" placeholder="DDD de Destino">
+    <!-- 🔹 DDD de Destino -->
+    <div class="mb-3">
+      <label class="form-label">DDD de Destino:</label>
+      <select class="form-select" [(ngModel)]="callCostRequest.destination">
+        <option value="">Selecione o DDD de destino</option>
+        <option *ngFor="let ddd of availableDestinations" [value]="ddd">{{ ddd }}</option>
+      </select>
+      <small class="text-danger" *ngIf="submitted && errors.destination">{{ errors.destination }}</small>
     </div>
 
-    <div class="input-group">
-      <span class="input-icon"><i class="fas fa-clock"></i></span>
-      <input type="number" [(ngModel)]="callCostRequest.duration" class="form-control" placeholder="Tempo da Ligação">
+    <!-- 🔹 Tempo da Ligação -->
+    <div class="mb-3">
+      <label class="form-label">Tempo da Ligação (minutos):</label>
+      <input type="number" class="form-control" [(ngModel)]="callCostRequest.duration">
+      <small class="text-danger" *ngIf="submitted && errors.duration">{{ errors.duration }}</small>
     </div>
 
-    <div class="input-group">
-      <span class="input-icon"><i class="fas fa-phone"></i></span>
-      <select [(ngModel)]="callCostRequest.plan" class="form-control">
+    <!-- 🔹 Plano FaleMais -->
+    <div class="mb-3">
+      <label class="form-label">Plano FaleMais:</label>
+      <select class="form-select" [(ngModel)]="callCostRequest.plan">
         <option value="">Selecione um plano</option>
         <option value="FaleMais 30">FaleMais 30</option>
         <option value="FaleMais 60">FaleMais 60</option>
         <option value="FaleMais 120">FaleMais 120</option>
       </select>
+      <small class="text-danger" *ngIf="submitted && errors.plan">{{ errors.plan }}</small>
     </div>
 
-    <div *ngIf="loading" class="loading-spinner">
-      <i class="fas fa-spinner fa-spin"></i> Calculando...
+    <!-- Botão de calcular -->
+    <button class="btn btn-primary w-100" (click)="calculateCost()">
+      <i class="fas fa-calculator"></i> Calcular 💰
+    </button>
+
+    <!-- 🔹 Exibição do resultado -->
+    <div *ngIf="result" class="alert alert-success mt-3 text-center">
+      <h5 class="mb-2">📝 Resultado:</h5>
+      <p class="text-success fw-bold">✅ Com Plano: R$ {{ result.costWithPlan.toFixed(2) }}</p>
+      <p class="text-danger fw-bold">❌ Sem Plano: R$ {{ result.costWithoutPlan.toFixed(2) }}</p>
     </div>
 
-    <button (click)="calculateCost()" class="btn btn-primary">Calcular</button>
-  </div>
-
-  <div class="right-panel">
-    <div *ngIf="result" class="result-container">
-      <h2>💰 Resultado</h2>
-      <p><strong>Com Plano:</strong> <span class="price">R$ {{ result?.costWithPlan?.toFixed(2) }}</span></p>
-      <p><strong>Sem Plano:</strong> <span class="price">R$ {{ result?.costWithoutPlan?.toFixed(2) }}</span></p>
-    </div>
-
-    <div *ngIf="!!errorMessage" class="error-message">
+    <!-- 🔹 Mensagem de erro -->
+    <div *ngIf="submitted && !!errorMessage" class="alert alert-danger mt-3 text-center">
       <p>{{ errorMessage }}</p>
     </div>
   </div>
 </div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
