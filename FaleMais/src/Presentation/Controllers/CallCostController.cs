@@ -21,16 +21,12 @@ public class CallCostController : ControllerBase
         try
         {
             var result = _callCostService.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan);
-
-            if (result.CostWithoutPlan == -1)
-            {
-                return BadRequest("Origem ou Destino Inválidos");
-            }
-
             return Ok(result);
-        } catch (ArgumentException ex)
+        }
+        catch (ArgumentException ex)
         {
-            return BadRequest(new { message = ex.Message });
+            return BadRequest(new ErrorResponse { Message = ex.Message });
         }
     }
+
 }

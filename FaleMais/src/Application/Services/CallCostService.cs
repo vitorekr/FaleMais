@@ -10,19 +10,14 @@ public class CallCostService : ICallCostService
 
     private static readonly Dictionary<(string, string), decimal> _callRates = new()
     {
-        { ("011", "016"), 1.90m },
-        { ("016", "011"), 2.90m },
-        { ("011", "017"), 1.70m },
-        { ("017", "011"), 2.70m },
-        { ("011", "018"), 0.90m },
-        { ("018", "011"), 1.90m }
+        { ("011", "016"), 1.90m }, { ("016", "011"), 2.90m },
+        { ("011", "017"), 1.70m }, { ("017", "011"), 2.70m },
+        { ("011", "018"), 0.90m }, { ("018", "011"), 1.90m }
     };
 
     private static readonly Dictionary<string, int> _plans = new()
     {
-        { "FaleMais 30", 30 },
-        { "FaleMais 60", 60 },
-        { "FaleMais 120", 120 }
+        { "FaleMais 30", 30 }, { "FaleMais 60", 60 }, { "FaleMais 120", 120 }
     };
 
     public CallCostService(ILogger<CallCostService> logger)
@@ -32,14 +27,39 @@ public class CallCostService : ICallCostService
 
     public CalculateCallCostResponse CalculateCallCost(string origin, string destination, int duration, string plan)
     {
-        decimal rate = _callRates[(origin, destination)];
-        int freeMinutes = _plans.GetValueOrDefault(plan, 0);
+        try
+        {
+            ValidateInputs(origin, destination, duration, plan);
 
-        decimal costWithoutPlan = duration * rate;
-        decimal costWithPlan = Math.Max(0, duration - freeMinutes) * rate * 1.10m;
+            decimal rate = _callRates[(origin, destination)];
+            int freeMinutes = _plans.GetValueOrDefault(plan, 0);
 
-        _logger.LogInformation($"Cálculo realizado: {costWithPlan} com plano, {costWithoutPlan} sem plano.");
+            decimal costWithoutPlan = duration * rate;
+            decimal costWithPlan = Math.Max(0, duration - freeMinutes) * rate * 1.10m;
 
-        return new CalculateCallCostResponse { CostWithPlan = costWithPlan, CostWithoutPlan = costWithoutPlan };
+            _logger.LogInformation($"Cálculo realizado: Com plano: R$ {costWithPlan}, Sem plano: R$ {costWithoutPlan}");
+
+            return new CalculateCallCostResponse { CostWithPlan = costWithPlan, CostWithoutPlan = costWithoutPlan };
+        }
+        catch (Exception ex)
+        {
+            _logger.LogError($"Erro ao calcular custo: {ex.Message}");
+            throw;
+        }
+    }
+
+    private void ValidateInputs(string origin, string destination, int duration, string plan)
+    {
+        if (string.IsNullOrWhiteSpace(origin) || string.IsNullOrWhiteSpace(destination))
+            throw new ArgumentException("Origem e destino não podem estar vazios.");
+
+        if (duration <= 0)
+            throw new ArgumentException("A duração da chamada deve ser maior que zero.");
+
+        if (!_callRates.ContainsKey((origin, destination)))
+            throw new ArgumentException($"Não há comunicação entre os DDDs informados ({origin} -> {destination}).");
+
+        if (!string.IsNullOrWhiteSpace(plan) && !_plans.ContainsKey(plan))
+            throw new ArgumentException($"O plano '{plan}' não existe. Escolha um dos planos disponíveis.");
     }
 }

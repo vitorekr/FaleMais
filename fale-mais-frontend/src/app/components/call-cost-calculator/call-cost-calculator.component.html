@@ -1,10 +1,14 @@
-<div class="container-fluid d-flex justify-content-center align-items-center vh-100">
-  <div class="card p-4 shadow-lg">
-    <h2 class="text-center mb-4"><i></i> Calculadora de Custo FaleMais</h2>
+<div class="container-fluid d-flex justify-content-center align-items-center min-vh-100 bg-light">
+  <div class="card p-4 shadow-lg rounded-3 w-100" style="max-width: 500px;">
+    <h2 class="text-center mb-4">
+      <i class="bi bi-telephone-fill text-primary"></i> Calculadora de Custo FaleMais
+    </h2>
 
     <!-- 🔹 DDD de Origem -->
     <div class="mb-3">
-      <label class="form-label">DDD de Origem:</label>
+      <label class="form-label">
+        <i class="bi bi-geo-alt-fill text-secondary"></i> DDD de Origem:
+      </label>
       <select class="form-select" [(ngModel)]="callCostRequest.origin" (change)="updateDestinations()">
         <option value="">Selecione o DDD de origem</option>
         <option *ngFor="let ddd of validOrigins" [value]="ddd">{{ ddd }}</option>
@@ -14,7 +18,9 @@
 
     <!-- 🔹 DDD de Destino -->
     <div class="mb-3">
-      <label class="form-label">DDD de Destino:</label>
+      <label class="form-label">
+        <i class="bi bi-arrow-right-circle-fill text-secondary"></i> DDD de Destino:
+      </label>
       <select class="form-select" [(ngModel)]="callCostRequest.destination">
         <option value="">Selecione o DDD de destino</option>
         <option *ngFor="let ddd of availableDestinations" [value]="ddd">{{ ddd }}</option>
@@ -24,14 +30,18 @@
 
     <!-- 🔹 Tempo da Ligação -->
     <div class="mb-3">
-      <label class="form-label">Tempo da Ligação (minutos):</label>
-      <input type="number" class="form-control" [(ngModel)]="callCostRequest.duration">
+      <label class="form-label">
+        <i class="bi bi-clock-fill text-secondary"></i> Tempo da Ligação (min):
+      </label>
+      <input type="number" class="form-control" [(ngModel)]="callCostRequest.duration" min="1">
       <small class="text-danger" *ngIf="submitted && errors.duration">{{ errors.duration }}</small>
     </div>
 
     <!-- 🔹 Plano FaleMais -->
     <div class="mb-3">
-      <label class="form-label">Plano FaleMais:</label>
+      <label class="form-label">
+        <i class="bi bi-card-list text-secondary"></i> Plano FaleMais:
+      </label>
       <select class="form-select" [(ngModel)]="callCostRequest.plan">
         <option value="">Selecione um plano</option>
         <option value="FaleMais 30">FaleMais 30</option>
@@ -41,24 +51,29 @@
       <small class="text-danger" *ngIf="submitted && errors.plan">{{ errors.plan }}</small>
     </div>
 
-    <!-- Botão de calcular -->
-    <button class="btn btn-primary w-100" (click)="calculateCost()">
-      <i class="fas fa-calculator"></i> Calcular 💰
+    <!-- 🔹 Botão de Calcular -->
+    <button class="btn btn-primary w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center" (click)="calculateCost()">
+      <i class="bi bi-calculator me-2"></i> Calcular
     </button>
 
-    <!-- 🔹 Exibição do resultado -->
+    <!-- 🔹 Exibição do Resultado -->
     <div *ngIf="result" class="alert alert-success mt-3 text-center">
-      <h5 class="mb-2">📝 Resultado:</h5>
-      <p class="text-success fw-bold">✅ Com Plano: R$ {{ result.costWithPlan.toFixed(2) }}</p>
-      <p class="text-danger fw-bold">❌ Sem Plano: R$ {{ result.costWithoutPlan.toFixed(2) }}</p>
+      <h5 class="mb-2"><i class="bi bi-clipboard-check-fill"></i> Resultado:</h5>
+      <p class="text-success fw-bold">
+        <i class="bi bi-check-circle-fill"></i> Com Plano: R$ {{ result.costWithPlan.toFixed(2) }}
+      </p>
+      <p class="text-danger fw-bold">
+        <i class="bi bi-x-circle-fill"></i> Sem Plano: R$ {{ result.costWithoutPlan.toFixed(2) }}
+      </p>
     </div>
 
-    <!-- 🔹 Mensagem de erro -->
+    <!-- 🔹 Mensagem de Erro -->
     <div *ngIf="submitted && !!errorMessage" class="alert alert-danger mt-3 text-center">
-      <p>{{ errorMessage }}</p>
+      <p><i class="bi bi-exclamation-triangle-fill"></i> {{ errorMessage }}</p>
     </div>
   </div>
 </div>
 
-<!-- Bootstrap JS -->
+<!-- 📌 Bootstrap & Bootstrap Icons -->
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css">

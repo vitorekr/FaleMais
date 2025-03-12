@@ -4,7 +4,7 @@ import { CallCostCalculatorComponent } from './components/call-cost-calculator/c
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CallCostCalculatorComponent], // Agora importamos os componentes diretamente
+  imports: [CallCostCalculatorComponent],
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.css']
 })

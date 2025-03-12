@@ -27,7 +27,6 @@ export class CallCostCalculatorComponent {
   errors: any = {};
   submitted = false;
 
-  // 🔹 Estrutura de DDDs com comunicação válida
   validDestinations: { [key: string]: string[] } = {
     "011": ["016", "017", "018"],
     "016": ["011"],
@@ -37,7 +36,6 @@ export class CallCostCalculatorComponent {
 
   availableDestinations: string[] = [];
 
-  // 🔹 Getter para obter os DDDs de origem disponíveis
   get validOrigins(): string[] {
     return Object.keys(this.validDestinations);
   }
@@ -91,10 +89,9 @@ export class CallCostCalculatorComponent {
     }
   }
 
-  // 🔹 Atualiza os DDDs de destino com base no DDD de origem selecionado
   updateDestinations() {
     const origin = this.callCostRequest.origin;
     this.availableDestinations = this.validDestinations[origin] || [];
-    this.callCostRequest.destination = ''; // Resetar o destino ao alterar a origem
+    this.callCostRequest.destination = '';
   }
 }

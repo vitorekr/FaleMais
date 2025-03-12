@@ -39,14 +39,20 @@ namespace FaleMais.Tests.Presentation.Controllers
         public void CalculateCallCost_InvalidRequest_ReturnsBadRequest()
         {
             var request = new CalculateCallCostRequest { Origin = "000", Destination = "999", Duration = 10, Plan = "" };
-            var expectedResponse = new CalculateCallCostResponse { CostWithPlan = -1, CostWithoutPlan = -1 };
 
-            _mockService.Setup(s => s.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan))
-                        .Returns(expectedResponse);
+            _mockService
+                .Setup(s => s.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan))
+                .Throws(new ArgumentException("DDD inválido"));
 
             var result = _controller.CalculateCallCost(request);
 
-            Assert.IsType<BadRequestObjectResult>(result);
+            var badRequestResult = Assert.IsType<BadRequestObjectResult>(result);
+
+            var response = Assert.IsType<ErrorResponse>(badRequestResult.Value);
+
+            Assert.NotNull(response);
+            Assert.Equal("DDD inválido", response.Message);
         }
+
     }
 }
