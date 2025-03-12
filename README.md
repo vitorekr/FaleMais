@@ -7,7 +7,7 @@
 ## Como Rodar o Projeto
 ### Backend
 ```bash
-cd FaleMais
+cd fale-mais-backend
 dotnet run
 ```
 ### Frontend
@@ -19,6 +19,6 @@ ng serve --open
 
 ### Testes
 ```bash
-cd FaleMais
+cd fale-mais-backend
 dotnet test
 ```
