@@ -9,6 +9,9 @@
 ```bash
 cd fale-mais-backend
 dotnet run
+
+Acesso ao Swagger por:
+localhost:5000/swagger
 ```
 ### Frontend
 ```bash
