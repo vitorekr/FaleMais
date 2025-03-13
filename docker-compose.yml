@@ -18,6 +18,8 @@ services:
     container_name: mssql-init
     depends_on:
       - sqlserver
+      - backend
+      - frontend
     volumes:
       - ./init.sql:/init.sql
     command: >
