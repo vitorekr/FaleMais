@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using FaleMais.Application.DTOs;
 using FaleMais.Application.Interfaces;
+using System;
 
 namespace FaleMais.Presentation.Controllers;
 
@@ -16,17 +17,22 @@ public class CallCostController : ControllerBase
     }
 
     [HttpPost("calculate")]
-    public IActionResult CalculateCallCost([FromBody] CalculateCallCostRequest request)
+    public async Task<IActionResult> CalculateCallCost([FromBody] CalculateCallCostRequest request)
     {
         try
         {
-            var result = _callCostService.CalculateCallCost(request.Origin, request.Destination, request.Duration, request.Plan);
+            var result = await _callCostService.CalculateCallCostAsync(request.Origin, request.Destination, request.Duration, request.Plan);
             return Ok(result);
         }
         catch (ArgumentException ex)
         {
             return BadRequest(new ErrorResponse { Message = ex.Message });
         }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Erro ao calcular custo da chamada: {ex.Message}");
+            Console.WriteLine($"StackTrace: {ex.StackTrace}");
+            return StatusCode(500, new ErrorResponse { Message = "Erro interno no servidor." });
+        }
     }
-
 }

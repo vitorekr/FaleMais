@@ -1,9 +1,12 @@
-using Xunit;
+Ôªøusing Xunit;
 using Moq;
 using Microsoft.Extensions.Logging;
 using FaleMais.Application.Services;
 using FaleMais.Application.DTOs;
+using FaleMais.Domain.Repositories;
+using FaleMais.Domain.Entities;
 using System;
+using System.Threading.Tasks;
 
 namespace FaleMais.Tests.Application.Services
 {
@@ -11,77 +14,121 @@ namespace FaleMais.Tests.Application.Services
     {
         private readonly CallCostService _service;
         private readonly Mock<ILogger<CallCostService>> _mockLogger;
+        private readonly Mock<ITarifaRepository> _mockTarifaRepository;
+        private readonly Mock<IPlanoRepository> _mockPlanoRepository;
 
         public CallCostServiceTests()
         {
             _mockLogger = new Mock<ILogger<CallCostService>>();
-            _service = new CallCostService(_mockLogger.Object);
+            _mockTarifaRepository = new Mock<ITarifaRepository>();
+            _mockPlanoRepository = new Mock<IPlanoRepository>();
+
+            _service = new CallCostService(_mockTarifaRepository.Object, _mockPlanoRepository.Object, _mockLogger.Object);
         }
 
         [Fact]
-        public void CalculateCallCost_WithoutPlan_ReturnsCorrectValue()
+        public async Task CalculateCallCost_WithoutPlan_ReturnsCorrectValue()
         {
-            var result = _service.CalculateCallCost("011", "016", 20, "");
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("011", "016"))
+                .ReturnsAsync(new Tarifa { Origem = "011", Destino = "016", Valor = 1.90m });
+
+            var result = await _service.CalculateCallCostAsync("011", "016", 20, "");
+
             Assert.Equal(38.00m, result.CostWithoutPlan);
         }
 
         [Fact]
-        public void CalculateCallCost_WithPlan_WithinFreeMinutes_ReturnsZero()
+        public async Task CalculateCallCost_WithPlan_WithinFreeMinutes_ReturnsZero()
         {
-            var result = _service.CalculateCallCost("011", "016", 30, "FaleMais 30");
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("011", "016"))
+                .ReturnsAsync(new Tarifa { Origem = "011", Destino = "016", Valor = 1.90m });
+
+            _mockPlanoRepository
+                .Setup(repo => repo.GetPlanoAsync("FaleMais 30"))
+                .ReturnsAsync(new Plano { Nome = "FaleMais 30", MinutosGratis = 30 });
+
+            var result = await _service.CalculateCallCostAsync("011", "016", 30, "FaleMais 30");
+
             Assert.Equal(0m, result.CostWithPlan);
         }
 
         [Fact]
-        public void CalculateCallCost_WithPlan_ExceedingFreeMinutes_ReturnsCorrectValue()
+        public async Task CalculateCallCost_WithPlan_ExceedingFreeMinutes_ReturnsCorrectValue()
         {
-            var result = _service.CalculateCallCost("011", "016", 40, "FaleMais 30");
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("011", "016"))
+                .ReturnsAsync(new Tarifa { Origem = "011", Destino = "016", Valor = 1.90m });
+
+            _mockPlanoRepository
+                .Setup(repo => repo.GetPlanoAsync("FaleMais 30"))
+                .ReturnsAsync(new Plano { Nome = "FaleMais 30", MinutosGratis = 30 });
+
+            var result = await _service.CalculateCallCostAsync("011", "016", 40, "FaleMais 30");
+
             Assert.Equal(20.90m, result.CostWithPlan);
         }
 
         [Fact]
-        public void CalculateCallCost_InvalidDDD_ThrowsArgumentException()
+        public async Task CalculateCallCost_InvalidDDD_ThrowsArgumentException()
         {
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _service.CalculateCallCost("000", "999", 10, ""));
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("000", "999"))
+                .ReturnsAsync((Tarifa?)null);
 
-            Assert.Contains("N„o h· comunicaÁ„o entre os DDDs informados", exception.Message);
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.CalculateCallCostAsync("000", "999", 10, ""));
+
+            Assert.Contains("N√£o h√° comunica√ß√£o entre os DDDs", exception.Message);
         }
 
         [Fact]
-        public void CalculateCallCost_InvalidPlan_ThrowsArgumentException()
+        public async Task CalculateCallCost_InvalidPlan_ThrowsArgumentException()
         {
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _service.CalculateCallCost("011", "016", 10, "Plano Inexistente"));
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("011", "016"))
+                .ReturnsAsync(new Tarifa { Origem = "011", Destino = "016", Valor = 1.90m });
 
-            Assert.Contains("O plano 'Plano Inexistente' n„o existe", exception.Message);
+            _mockPlanoRepository
+                .Setup(repo => repo.GetPlanoAsync("Plano Inexistente"))
+                .ReturnsAsync((Plano?)null);
+
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.CalculateCallCostAsync("011", "016", 10, "Plano Inexistente"));
+
+            Assert.Contains("O plano 'Plano Inexistente' n√£o existe", exception.Message);
         }
 
         [Fact]
-        public void CalculateCallCost_InvalidDuration_ThrowsArgumentException()
+        public async Task CalculateCallCost_InvalidDuration_ThrowsArgumentException()
         {
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _service.CalculateCallCost("011", "016", 0, "FaleMais 30"));
+            _mockTarifaRepository
+                .Setup(repo => repo.GetTarifaAsync("011", "016"))
+                .ReturnsAsync(new Tarifa { Origem = "011", Destino = "016", Valor = 1.90m });
 
-            Assert.Contains("A duraÁ„o da chamada deve ser maior que zero", exception.Message);
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.CalculateCallCostAsync("011", "016", 0, "FaleMais 30"));
+
+            Assert.Contains("A dura√ß√£o da chamada deve ser maior que zero", exception.Message);
         }
 
         [Fact]
-        public void CalculateCallCost_EmptyOrigin_ThrowsArgumentException()
+        public async Task CalculateCallCost_EmptyOrigin_ThrowsArgumentException()
         {
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _service.CalculateCallCost("", "016", 10, "FaleMais 30"));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.CalculateCallCostAsync("", "016", 10, "FaleMais 30"));
 
-            Assert.Contains("Origem e destino n„o podem estar vazios", exception.Message);
+            Assert.Contains("Origem e destino n√£o podem estar vazios", exception.Message);
         }
 
         [Fact]
-        public void CalculateCallCost_EmptyDestination_ThrowsArgumentException()
+        public async Task CalculateCallCost_EmptyDestination_ThrowsArgumentException()
         {
-            var exception = Assert.Throws<ArgumentException>(() =>
-                _service.CalculateCallCost("011", "", 10, "FaleMais 30"));
+            var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
+                await _service.CalculateCallCostAsync("011", "", 10, "FaleMais 30"));
 
-            Assert.Contains("Origem e destino n„o podem estar vazios", exception.Message);
+            Assert.Contains("Origem e destino n√£o podem estar vazios", exception.Message);
         }
     }
 }

@@ -1,8 +1,11 @@
 using FaleMais.Application.DTOs;
+using System.Threading.Tasks;
 
-namespace FaleMais.Application.Interfaces;
-
-public interface ICallCostService
+namespace FaleMais.Application.Interfaces
 {
-    CalculateCallCostResponse CalculateCallCost(string origin, string destination, int duration, string plan);
+    public interface ICallCostService
+    {
+        Task<CalculateCallCostResponse> CalculateCallCostAsync(string origin, string destination, int duration, string plan);
+    }
 }
+

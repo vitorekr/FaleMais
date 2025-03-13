@@ -1,0 +1,12 @@
+node_modules
+.vscode
+.angular
+public
+coverage
+
+.git
+.gitignore
+.editorconfig
+Dockerfile
+package-lock.json
+README.md

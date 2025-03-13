@@ -47,9 +47,21 @@
       <small class="text-danger" *ngIf="submitted && errors.plan">{{ errors.plan }}</small>
     </div>
 
-    <button class="btn btn-primary w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center" (click)="calculateCost()">
-      <i class="bi bi-calculator me-2"></i> Calcular
+    <button class="btn btn-primary w-100 fw-bold shadow-sm d-flex align-items-center justify-content-center"
+            (click)="calculateCost()"
+            [disabled]="loading">
+
+      <ng-container *ngIf="!loading">
+        <i class="bi bi-calculator me-2"></i> Calcular
+      </ng-container>
+
+      <ng-container *ngIf="loading">
+        <span class="spinner-border spinner-border-sm text-light me-2" role="status"></span>
+        Calculando...
+      </ng-container>
+
     </button>
+
 
     <div *ngIf="result" class="alert alert-success mt-3 text-center">
       <h5 class="mb-2"><i class="bi bi-clipboard-check-fill"></i> Resultado:</h5>

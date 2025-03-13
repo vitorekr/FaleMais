@@ -1,65 +1,57 @@
-﻿using FaleMais.Application.DTOs;
-using FaleMais.Application.Interfaces;
+﻿using System;
+using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
+using FaleMais.Application.Interfaces;
+using FaleMais.Domain.Repositories;
+using FaleMais.Application.DTOs;
 
-namespace FaleMais.Application.Services;
-
-public class CallCostService : ICallCostService
+namespace FaleMais.Application.Services
 {
-    private readonly ILogger<CallCostService> _logger;
-
-    private static readonly Dictionary<(string, string), decimal> _callRates = new()
+    public class CallCostService : ICallCostService
     {
-        { ("011", "016"), 1.90m }, { ("016", "011"), 2.90m },
-        { ("011", "017"), 1.70m }, { ("017", "011"), 2.70m },
-        { ("011", "018"), 0.90m }, { ("018", "011"), 1.90m }
-    };
+        private readonly ITarifaRepository _tarifaRepository;
+        private readonly IPlanoRepository _planoRepository;
+        private readonly ILogger<CallCostService> _logger;
 
-    private static readonly Dictionary<string, int> _plans = new()
-    {
-        { "FaleMais 30", 30 }, { "FaleMais 60", 60 }, { "FaleMais 120", 120 }
-    };
-
-    public CallCostService(ILogger<CallCostService> logger)
-    {
-        _logger = logger;
-    }
-
-    public CalculateCallCostResponse CalculateCallCost(string origin, string destination, int duration, string plan)
-    {
-        try
+        public CallCostService(
+            ITarifaRepository tarifaRepository,
+            IPlanoRepository planoRepository,
+            ILogger<CallCostService> logger)
         {
-            ValidateInputs(origin, destination, duration, plan);
-
-            decimal rate = _callRates[(origin, destination)];
-            int freeMinutes = _plans.GetValueOrDefault(plan, 0);
-
-            decimal costWithoutPlan = duration * rate;
-            decimal costWithPlan = Math.Max(0, duration - freeMinutes) * rate * 1.10m;
-
-            _logger.LogInformation($"Cálculo realizado: Com plano: R$ {costWithPlan}, Sem plano: R$ {costWithoutPlan}");
-
-            return new CalculateCallCostResponse { CostWithPlan = costWithPlan, CostWithoutPlan = costWithoutPlan };
+            _tarifaRepository = tarifaRepository;
+            _planoRepository = planoRepository;
+            _logger = logger;
         }
-        catch (Exception ex)
+
+        public async Task<CalculateCallCostResponse> CalculateCallCostAsync(string origin, string destination, int duration, string plan)
         {
-            _logger.LogError($"Erro ao calcular custo: {ex.Message}");
-            throw;
+            _logger.LogInformation($"Calculando custo de chamada: Origem={origin}, Destino={destination}, Duração={duration}, Plano={plan}");
+
+            if (string.IsNullOrWhiteSpace(origin) || string.IsNullOrWhiteSpace(destination))
+            {
+                throw new ArgumentException("Origem e destino não podem estar vazios");
+            }
+
+            if (duration <= 0)
+            {
+                throw new ArgumentException("A duração da chamada deve ser maior que zero");
+            }
+
+            var tarifa = await _tarifaRepository.GetTarifaAsync(origin, destination);
+            if (tarifa == null)
+                throw new ArgumentException("Não há comunicação entre os DDDs");
+
+            var plano = await _planoRepository.GetPlanoAsync(plan);
+            if (!string.IsNullOrEmpty(plan) && plano == null)
+            {
+                throw new ArgumentException($"O plano '{plan}' não existe");
+            }
+
+            int minutosGratis = plano?.MinutosGratis ?? 0;
+            decimal custoSemPlano = duration * tarifa.Valor;
+            decimal custoComPlano = Math.Max(0, duration - minutosGratis) * tarifa.Valor * 1.10m;
+
+            return new CalculateCallCostResponse { CostWithPlan = custoComPlano, CostWithoutPlan = custoSemPlano };
         }
-    }
-
-    private void ValidateInputs(string origin, string destination, int duration, string plan)
-    {
-        if (string.IsNullOrWhiteSpace(origin) || string.IsNullOrWhiteSpace(destination))
-            throw new ArgumentException("Origem e destino não podem estar vazios.");
-
-        if (duration <= 0)
-            throw new ArgumentException("A duração da chamada deve ser maior que zero.");
-
-        if (!_callRates.ContainsKey((origin, destination)))
-            throw new ArgumentException($"Não há comunicação entre os DDDs informados ({origin} -> {destination}).");
-
-        if (!string.IsNullOrWhiteSpace(plan) && !_plans.ContainsKey(plan))
-            throw new ArgumentException($"O plano '{plan}' não existe. Escolha um dos planos disponíveis.");
     }
 }

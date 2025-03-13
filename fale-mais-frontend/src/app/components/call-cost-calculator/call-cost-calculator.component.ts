@@ -51,18 +51,18 @@ export class CallCostCalculatorComponent {
     this.validateFields();
 
     if (Object.keys(this.errors).length > 0) {
-      this.loading = false;
+      this.loading = false; 
       return;
     }
 
     this.callCostService.calculateCost(this.callCostRequest).subscribe({
       next: (response) => {
         this.result = response;
-        this.loading = false;
+        this.loading = false; 
       },
       error: () => {
         this.errorMessage = 'Erro ao calcular o custo da chamada. Verifique os dados informados.';
-        this.loading = false;
+        this.loading = false; 
       }
     });
   }
