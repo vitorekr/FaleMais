@@ -1,23 +1,12 @@
-﻿﻿# FaleMais - Calculadora de Custo de Chamadas
-
 ## Tecnologias Utilizadas
 - **Frontend:** Angular + Bootstrap
 - **Backend:** .NET 8 + C#
+- **Docker**
 
 ## Como Rodar o Projeto
-### Backend
+### Docker
 ```bash
-cd fale-mais-backend
-dotnet run
-
-Acesso ao Swagger por:
-localhost:5000/swagger
-```
-### Frontend
-```bash
-cd fale-mais-frontend
-npm install
-ng serve --open
+docker-compose up --build
 ```
 
 ### Testes
