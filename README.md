@@ -7,6 +7,12 @@
 ### Docker
 ```bash
 docker-compose up --build
+
+Para acessa o Swagger acesse:
+http://localhost:5000/swagger
+
+Para acessar o frontend acesse:
+http://localhost/
 ```
 
 ### Testes
